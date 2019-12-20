@@ -15,7 +15,6 @@ h = the estimated movement cost to move from that given square on the grid to th
 ------------------------------------
 - Code Structure
 
-// A* Search Algorithm
 1.  Initialize the open list
 2.  Initialize the closed list
     put the starting node on the open 
@@ -26,10 +25,8 @@ h = the estimated movement cost to move from that given square on the grid to th
        the open list, call it "q"
 
     b) pop q off the open list
-  
     c) generate q's 8 successors and set their 
        parents to q
-   
     d) for each successor
         i) if successor is the goal, stop search
           successor.g = q.g + distance between 
