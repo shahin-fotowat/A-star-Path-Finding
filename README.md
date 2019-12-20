@@ -40,6 +40,7 @@ h = the estimated movement cost to move from that given square on the grid to th
           Manhattan, Diagonal and Euclidean 
           Heuristics)
           
+          
           successor.f = successor.g + successor.h
 
         ii) if a node with the same position as 
