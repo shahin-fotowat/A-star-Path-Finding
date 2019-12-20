@@ -21,6 +21,7 @@ h = the estimated movement cost to move from that given square on the grid to th
     list (you can leave its f at zero)
 
 3.  while the open list is not empty
+    
     a) find the node with the least f on 
        the open list, call it "q"
 
@@ -51,5 +52,6 @@ h = the estimated movement cost to move from that given square on the grid to th
             otherwise, add  the node to the open list
      end (for loop)
   
+    
     e) push q on the closed list
     end (while loop) 
