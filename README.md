@@ -1,4 +1,4 @@
-# A-star-Path-Finding
+# A* Path Finding
 
 A* is the most popular choice for pathfinding, because it's fairly flexible and can be used in a wide range of contexts. A* is like Dijkstra's Algorithm in that it can be used to find a shortest path. A* is like Greedy Best-First-Search in that it can use a heuristic to guide itself.
 
