@@ -1,11 +1,11 @@
 
-var rows = 25;  // Number of rows in the grid
-var cols = 25;  // Number of columns in the grid
+var rows = 45;  // Number of rows in the grid
+var cols = 45;  // Number of columns in the grid
 var grid = new Array(cols); // Create the grid
 var openList   = []; //List of nodes that still need to be evaluated
 var closedList = []; //List of nodes that have finished being evaluated
-var canvas_width  = 400; //Width of the canvas
-var canvas_height = 400 ; //Height of the canvas
+var canvas_width  = 900; //Width of the canvas
+var canvas_height = 803 ; //Height of the canvas
 var width_dist, height_dist; //vertical and horizontal distances between
                              //each node to be calculated
 var path = [];
@@ -21,7 +21,8 @@ function remove_element(arr, element) {
 }
 //-----------------------------------------------------------------------------
 function heuristic(point_A, point_B) {
-    return dist(point_A.x, point_A.y, point_B.x, point_B.y);
+    //return dist(point_A.x, point_A.y, point_B.x, point_B.y);
+    return abs(point_A.x - point_B.x) + abs(point_A.y - point_B.y);
 }
 //-----------------------------------------------------------------------------
 //function constructor
@@ -48,6 +49,12 @@ function Node(x_val, y_val) {
         if(this.y > 0) {
             this.neighbors.push(grid[this.x][this.y - 1]);
         }
+        if(this.x > 0 && this.y > 0) {
+            this.neighbors.push(grid[this.x - 1][this.y - 1]);
+        }
+        if(this.x < cols - 1 && this.y < rows - 1) {
+            this.neighbors.push(grid[this.x + 1][this.y + 1]);
+        }
     }
 
     // Display the node
@@ -60,10 +67,14 @@ function Node(x_val, y_val) {
 }
 //-----------------------------------------------------------------------------
 function setup() {
-    createCanvas(canvas_width, canvas_height);
+    var cnv = createCanvas(canvas_width, canvas_height);
+    cnv.position(0, 100);
     console.log("A*");
 
     // Vertical and horizontal distance between every nodes
+    //width_dist  = canvas_width / cols;
+    //height_dist = canvas_height / rows;
+
     width_dist  = canvas_width / cols;
     height_dist = canvas_height / rows;
 
@@ -92,9 +103,10 @@ function setup() {
     console.log(grid);
 
 } // end setup()
+
 //-----------------------------------------------------------------------------
 function draw() {
-    background(0);
+    background(0, 100, 200);
 
     if(openList.length > 0) {
         var lowest_cost = 0;  //index of the node with the loswest cost to the end
