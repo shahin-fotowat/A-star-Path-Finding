@@ -1,11 +1,11 @@
 
-var rows = 80;  // Number of rows in the grid
-var cols = 80;  // Number of columns in the grid
+var rows = 5;  // Number of rows in the grid
+var cols = 5;  // Number of columns in the grid
 var grid = new Array(rows); // Create the grid
 var openList   = []; //List of nodes that still need to be evaluated
 var closedList = []; //List of nodes that have finished being evaluated
-var canvas_width  = 2550; //Width of the canvas
-var canvas_height = 920; //Height of the canvas
+var canvas_width  = 400; //Width of the canvas
+var canvas_height = 400; //Height of the canvas
 var width_dist, height_dist; //vertical and horizontal distances between
                              //each node to be calculated
 
@@ -23,9 +23,26 @@ function remove_element(arr, element) {
 function Node(x_val, y_val) {
     this.x = x_val;  // X-coordinate of the node
     this.y = y_val;  // Y-coordinate of the node
-    this.f = 0;
-    this.g = 0;
-    this.h = 0;
+    this.f = 0;      // cost function
+    this.g = 0;      // distance traveled between nodes
+    this.h = 0;      // huerisitc value of each node
+    this.neighbors = [];  // list of neighbors of each node
+
+    //Sets the neighbors of each selected node
+    this.setNeighbors = function(grid) {
+        if(this.x < cols - 1) {
+            this.neighbors.push(grid[this.x + 1][this.y]);
+        }
+        if(this.x > 0) {
+            this.neighbors.push(grid[this.x - 1][this.y]);
+        }
+        if(this.y < rows - 1 ) {
+            this.neighbors.push(grid[this.x][this.y + 1]);
+        }
+        if(this.y > 0) {
+            this.neighbors.push(grid[this.x][this.y - 1]);
+        }
+    }
 
     // Display the node
     this.display = function(node_color) {
@@ -79,11 +96,36 @@ function draw() {
         //if the lowest cost found is the ending point, then we're finished
         if(openList[lowest_cost] === ending_node) {
             console.log("Searched is finished!");
+        } else {
+            //Add the neighbors of the evaluated node
+            openList[lowest_cost].setNeighbors(grid);
         }
         //Add the evaluated node to the closedList
-        closedList.push(openList(lowest_cost));
+        closedList.push(openList[lowest_cost]);
         //Remove the evaluated node from the openList
-        openList.remove_element(openList, openList[lowest_cost]);
+        remove_element(openList, openList[lowest_cost]);
+
+        //Obtain the neighbors of the node evaluated with the lowest cost
+        neighbors_list = openList[lowest_cost].neighbors;
+
+        for(var i = 0; i < neighbors_list.length; i++) {
+            if(!closedList.includes(neighbors_list[i])) {
+                tentative_g = openList[lowest_cost] + 1; //
+                //
+                if(openList.includes(neighbors_list[i])) {
+                        //
+                        if(tentative_g < neighbors_list[i].g) {
+                            neighbors_list[i].g = tentative_g;
+                        }
+                } else {
+                        //
+                        neighbors_list[i].g = tentative_g;
+                        openList.push(neighbors_list[i]);
+                } // end if
+            } // end if
+        } // end for
+
+
     } else {
         //Stop
     }
