@@ -4,11 +4,12 @@ var cols = 45;  // Number of columns in the grid
 var grid = new Array(cols); // Create the grid
 var openList   = []; //List of nodes that still need to be evaluated
 var closedList = []; //List of nodes that have finished being evaluated
-var canvas_width  = 900; //Width of the canvas
-var canvas_height = 803 ; //Height of the canvas
+var canvas_width  = 2200; //Width of the canvas
+var canvas_height = 800 ; //Height of the canvas
 var width_dist, height_dist; //vertical and horizontal distances between
                              //each node to be calculated
-var path = [];
+var path = [];     //
+
 
 //-----------------------------------------------------------------------------
 // Remove the evaluated node from openList
@@ -20,7 +21,7 @@ function remove_element(arr, element) {
     }
 }
 //-----------------------------------------------------------------------------
-function heuristic(point_A, point_B) {
+function manhattanDistance(point_A, point_B) {
     //return dist(point_A.x, point_A.y, point_B.x, point_B.y);
     return abs(point_A.x - point_B.x) + abs(point_A.y - point_B.y);
 }
@@ -34,7 +35,12 @@ function Node(x_val, y_val) {
     this.h = 0;      // heuristic value of each node
     this.p = undefined;   // parent node of an evaluated node
     this.neighbors = [];  // list of neighbors of each node
+    this.wall = false;    //
 
+    //
+    if(random(1) < 0.4) {
+        this.wall = true;
+    }
     //Sets the neighbors of each selected node
     this.setNeighbors = function(grid) {
         if(this.x < cols - 1) {
@@ -60,7 +66,11 @@ function Node(x_val, y_val) {
     // Display the node
     this.display = function(node_color) {
         fill(node_color);
-        noStroke();
+        if(this.wall) {   //***********
+            fill(200,150,100);
+        }
+        stroke(0);
+        strokeWeight(0.5);
         rect(this.x * width_dist, this.y * height_dist,
              width_dist - 1, height_dist - 1);
     }
@@ -68,13 +78,10 @@ function Node(x_val, y_val) {
 //-----------------------------------------------------------------------------
 function setup() {
     var cnv = createCanvas(canvas_width, canvas_height);
-    cnv.position(0, 100);
+    cnv.position(150, 90);
     console.log("A*");
 
     // Vertical and horizontal distance between every nodes
-    //width_dist  = canvas_width / cols;
-    //height_dist = canvas_height / rows;
-
     width_dist  = canvas_width / cols;
     height_dist = canvas_height / rows;
 
@@ -98,16 +105,19 @@ function setup() {
     starting_node = grid[0][0]; //Starting node top_left
     ending_node = grid[rows - 1][cols - 1]; // Ending node bottom right
 
+    starting_node.wall = false;   //
+    ending_node.wall = false;     //
+
     //start from the starting point added to the list
     openList.push(starting_node);
     console.log(grid);
-
 } // end setup()
 
 //-----------------------------------------------------------------------------
 function draw() {
-    background(0, 100, 200);
+    background(0,255,255);
 
+    if(closedList.length > 450) { noLoop();}
     if(openList.length > 0) {
         var lowest_cost = 0;  //index of the node with the loswest cost to the end
         //compares the temp lowest cost to the other node available in the
@@ -136,9 +146,11 @@ function draw() {
         //Obtain the neighbors of the node evaluated with the lowest cost
         var neighbors_list = evaluated_node.neighbors;
 
+        //
         for(var i = 0; i < neighbors_list.length; i++) {
             neighbor = neighbors_list[i];
-            if(!closedList.includes(neighbor)) {
+            //
+            if(!closedList.includes(neighbor) && !neighbor.wall) {
                 var tentative_g = evaluated_node.g + 1; //
                 //
                 if(openList.includes(neighbor)) {
@@ -153,7 +165,7 @@ function draw() {
                 } // end if
 
                 //
-                neighbor.h = heuristic(neighbor, ending_node);
+                neighbor.h = manhattanDistance(neighbor, ending_node);
                 //
                 neighbor.f = neighbor.g + neighbor.h;
                 //
@@ -161,7 +173,8 @@ function draw() {
             } // end if
         } // end for
     } else {
-        // No Solution
+        console.log("Solution does not exist!");
+        noLoop();
     }
 
     // Displays the background of the canvas grid as white
@@ -181,6 +194,7 @@ function draw() {
     for(var i = 0; i < closedList.length; i++) {
         closedList[i].display(color(255,0,0));
     }
+
     path = [];
     var temp  = evaluated_node;
     path.push(temp);
@@ -189,8 +203,11 @@ function draw() {
         temp = temp.p;
     }
 
-    // Display the evaluated nodes as red
-    for(var i = 0; i < path.length; i++) {
-        path[i].display(color(0,0,255));
+    if(closedList.length < 450) {
+    // Display the shortest path as blue
+        for(var i = 0; i < path.length; i++) {
+            path[i].display(color(0,0,255));
+        }
     }
+
 } // end draw()
